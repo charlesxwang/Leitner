@@ -15,6 +15,7 @@ urlpatterns = [
     url('^home/get_selected_user_categories/$', views.get_selected_user_categories,
         name='get_selected_user_categories'),
     url('^add_new_flashcard/$', views.add_new_flashcard, name='add_new_flashcard'),
+    url('^reImport/$', views.reImport, name='reImport'),
     path('home/<slug:category_name>/<int:lv>/<int:page>', views.category_page_render, name='category_page_render'),
 
     # ===============================================App‌ URLS=========================================================

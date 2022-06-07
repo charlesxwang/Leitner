@@ -10,6 +10,10 @@ from .serializers import CategorySerializer, FlashCartSerializer, UserProfileSer
 from .models import Category, FlashCart, UserProfile
 
 
+from glob import glob
+import os
+import requests
+
 # =============================================REST-FrameWork-Classes===================================================
 
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -278,6 +282,61 @@ def add_new_flashcard(request):
                                              synonyms=synonyms, example=example)
         flashcard.save()
         return redirect(category_page_render, category_name, lv, page)
+
+@csrf_exempt
+@login_required
+def reImport(request):
+    if request.method == "POST":
+        category_name = request.POST.get('category_name')
+        lv = request.POST.get('lv')
+        page = request.POST.get('page')
+        word = request.POST.get('word')
+        definition = request.POST.get('definition')
+        synonyms = request.POST.get('synonyms')
+        example = request.POST.get('example')
+
+        owner = UserProfile.objects.all().filter(user=request.user)[0]
+        category = Category.objects.all().filter(name=category_name, owner=owner)[0]
+
+        existingWords = [w.word for w in FlashCart.objects.all()]
+
+        for i in getNewWordsFromFile():
+            word = i['word']
+            if word not in existingWords:
+                definition = i['definition']
+                synonyms = i['synonyms']
+                example = i['example']
+                try:
+                    response = requests.get(f'https://api.dictionaryapi.dev/api/v2/entries/en/{word}')
+                    r = response.json()
+                    #definition = r[0]['meanings'][0]['definitions'][0]['definition']
+                    example = r[0]['meanings'][0]['definitions'][0]['example']
+                    synonyms = r[0]['meanings'][0]['definitions'][0]['synonyms']
+                    print('example', example)
+                    print('synonyms', synonyms)
+                except:
+                    pass
+
+                flashcard = FlashCart.objects.create(category=category, word=word, definition=definition,
+                                                 synonyms=synonyms, example=example)
+                flashcard.save()
+
+        #print(existingWords)
+        return redirect(category_page_render, category_name, lv, page)
+
+def getNewWordsFromFile(filename='/Users/charles/Downloads/GoogleDictionaryHistory (*).csv'):
+    files = glob(filename)
+    latest_file = max(files, key=os.path.getctime)
+    words = []
+    with open(latest_file, 'r') as f:
+        Lines = f.readlines()
+        for line in Lines:
+            l = line.split('\t')
+            words.append({'word':l[2],
+            'definition':l[3],
+            'synonyms':'',
+            'example':''})
+    return words
 
 
 @csrf_exempt
