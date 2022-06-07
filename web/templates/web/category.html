@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    {% ifnotequal lv 0 %}
+    {% if lv != 0 %}
         {% if selected_flashcard %}
             {#  Word Section  #}
             <div class="alert alert-info">
@@ -19,7 +19,7 @@
                 <div class="md col-md-6" style="text-align: right">
                     <br><br>
                     <div class="row">
-                        {% ifnotequal selected_flashcard.lv 5 %}
+                        {% if selected_flashcard.lv != 5 %}
                             <div class="md col-md-4">
                                 <br>
                                 <form method="post">
@@ -29,9 +29,9 @@
                                     <button class="btn btn-success" id="I_know_word_button">I Know!</button>
                                 </form>
                             </div>
-                        {% endifnotequal %}
+                        {% endif %}
 
-                        {% ifnotequal selected_flashcard.lv 1 %}
+                        {% if selected_flashcard.lv != 1 %}
                             <div class="md col-md-4">
                                 <br>
                                 <form method="post">
@@ -41,7 +41,7 @@
                                     <button class="btn btn-danger" id="I_dont_know_word_button">I Don't Know!</button>
                                 </form>
                             </div>
-                        {% endifnotequal %}
+                        {% endif %}
                         <div class="md col-md-4">
                             <br>
                             <button class="btn btn-info" id="show_meaning">Show Meaning</button>
@@ -97,7 +97,7 @@
                 </div>
             </div>
         {% endif %}
-    {% endifnotequal %}
+    {% endif %}
 
     {#  Info Section  #}
     <div class="alert alert-info">

@@ -13,5 +13,6 @@ sudo chown :www-data ../Leitner/
 sudo chmod -R 777 /var/www/
 sudo chown -R www-data /var/www/
 echo "Restarting Apache2..."
-sudo service apache2 restart
+#sudo service apache2 restart
+sudo apachectl start
 echo "done!"
